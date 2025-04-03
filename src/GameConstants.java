@@ -1,4 +1,5 @@
 public class GameConstants {
+
         public static   final String GAME_HANGMAN ="              Игра Виселица ";
         public static   final String START_OR_FINISH_INPUT ="Чтобы начать введите 1. Чтобы выйти нажмите 2";
         public static   final String WORD_COMPLIT ="Слово загадано, отгадывай по одной букве на киррилице," +
@@ -13,5 +14,6 @@ public class GameConstants {
         public static   final String EMPTY_INPUT="Пустой ввод, введите 1 чтобы начать, 2 чтобы выйти ";
         public static   final String GUESSED_LETTERS ="Отгаданые буквы: ";
         public static   final String MISTAKES="|  Ошибки: ";
-    }
+
+}
 

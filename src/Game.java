@@ -1,24 +1,24 @@
 import java.util.Arrays;
+
 import java.util.Scanner;
 
 public class Game {
     int countMistake = 0;
+    Word hangman = new Word();
+
+    String word = hangman.randomWord();
+
+    char[] wordChar = word.toCharArray();
+    char[] lastWord = new char[wordChar.length];
+
+    int countWin = wordChar.length;
+
+    StringBuilder rightLetter = new StringBuilder();
+    StringBuilder wrongLetter = new StringBuilder();
 
     private void gameLoop() {
-        Word hangman = new Word();
-
-        String word = hangman.randomWord();
-
-        char[] wordChar = word.toCharArray();
-        char[] lastWord = new char[wordChar.length];
 
         Arrays.fill(lastWord, '_');
-
-        int countWin = wordChar.length;
-
-        StringBuilder rightLetter = new StringBuilder();
-        StringBuilder wrongLetter = new StringBuilder();
-
         hangmanPicture();//countMistake
         String firstOutEmptyWord = new String(lastWord);
         System.out.println(GameConstants.WORD_COMPLIT);
@@ -33,37 +33,44 @@ public class Game {
 
             if (!input.matches("[а-яА-ЯёЁ]+") || input.isEmpty()) {
 
-                isNotCorrectInput( lastWord, rightLetter, wrongLetter);//countMistake,
+                incorrectInputMessage();
 
             } else {
+
+
 
                 boolean containsInput = word.contains(input) && !Arrays.toString(lastWord).contains(input)
                         && !rightLetter.toString().contains(input)
                         && !wrongLetter.toString().contains(input);
 
-                if (containsInput) {
-                    for (int i = 0; i < wordChar.length; i++) {
-                        if (wordChar[i] == sch[0]) {
-                            lastWord[i] = wordChar[i];
-                            countWin--;
-                        } else if (lastWord[i] == 0) {
-                            lastWord[i] = '_';
-                        }
-                    }
-                    rightLetter.append(sch[0]);
-                } else if (!word.contains(input) && !wrongLetter.toString().contains(input)
-                ) {
-                    countMistake++;
-                    wrongLetter.append(sch[0]);
-                } else if (rightLetter.toString().contains(input) || wrongLetter.toString().contains(input)) {
-                    System.out.println(GameConstants.LETTER_ALREADY_ENTERED);
-                }
-                rightAndWrongLetterOutput(lastWord, rightLetter, wrongLetter);//, countMistake
+                searchingLetterInMask(containsInput,sch,input);
+
+                rightAndWrongLetterOutput(lastWord, rightLetter, wrongLetter);
             }
 
         }
-        gameResultOutput( rightLetter, lastWord, word); //countMistake,
+        gameResultOutput( rightLetter, lastWord, word);
 
+    }
+
+    private void searchingLetterInMask(boolean containsInput,char[] sch,String input){
+        if (containsInput) {
+            for (int i = 0; i < wordChar.length; i++) {
+                if (wordChar[i] == sch[0]) {
+                    lastWord[i] = wordChar[i];
+                    countWin--;
+                } else if (lastWord[i] == 0) {
+                    lastWord[i] = '_';
+                }
+            }
+            rightLetter.append(sch[0]);
+        } else if (!word.contains(input) && !wrongLetter.toString().contains(input)
+        ) {
+            countMistake++;
+            wrongLetter.append(sch[0]);
+        } else if (rightLetter.toString().contains(input) || wrongLetter.toString().contains(input)) {
+            System.out.println(GameConstants.LETTER_ALREADY_ENTERED);
+        }
     }
 
     private void rightAndWrongLetterOutput(char[] lastWord, StringBuilder rightLetter,
@@ -91,15 +98,15 @@ public class Game {
         }
     }
 
-    private void isNotCorrectInput( char[] lastWord, StringBuilder rightLetter,
-                                    StringBuilder wrongLetter) {
+    private void incorrectInputMessage() {
         System.out.println(GameConstants.IS_NOT_CORRECT_INPUT);
-        hangmanPicture();//countMistake
+        hangmanPicture();
         String result = new String(lastWord);
         System.out.println(result);
         System.out.print(GameConstants.GUESSED_LETTERS + rightLetter + " ");
         System.out.println(GameConstants.MISTAKES + wrongLetter + " ");
-    }
+
+    } //char[] lastWord, StringBuilder rightLetter,StringBuilder wrongLetter
 
     private void hangmanPicture() {//int countMistake
 

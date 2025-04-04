@@ -1,12 +1,12 @@
 import java.util.Arrays;
-
+import java.util.HashSet;
 import java.util.Scanner;
 
 public class Game {
-    int countMistake = 0;
-    Word hangman = new Word();
+    int mistakesCounter = 0;
+    WordGenerator hangman = new WordGenerator();
 
-    String word = hangman.randomWord();
+    String word = hangman.getRandomWord();
 
     char[] wordChar = word.toCharArray();
     char[] lastWord = new char[wordChar.length];
@@ -17,43 +17,51 @@ public class Game {
     StringBuilder wrongLetter = new StringBuilder();
 
     private void gameLoop() {
-
         Arrays.fill(lastWord, '_');
-        hangmanPicture();//countMistake
+        hangmanPicture();
         String firstOutEmptyWord = new String(lastWord);
         System.out.println(GameConstants.WORD_COMPLIT);
         System.out.println(firstOutEmptyWord);
 
-        while (countMistake < 7 && countWin > 0) {
-
+        while (mistakesCounter < 7 && countWin > 0) {
             Scanner scanner = new Scanner(System.in);
             String input = scanner.nextLine().toLowerCase();
-
             char[] sch = input.toCharArray();
 
             if (!input.matches("[а-яА-ЯёЁ]+") || input.isEmpty()) {
-
                 incorrectInputMessage();
-
             } else {
 
+                HashSet<Character> wordToHeshSet =new HashSet<>();
+                for (char element: word.toCharArray()){
+                    wordToHeshSet.add(element);
+                }
+                HashSet<Character> lastWordToHeshSet =new HashSet<>();
+                for (char element: lastWord){
+                    lastWordToHeshSet.add(element);
+                }
+                HashSet<Character> rightLetterToHeshSet =new HashSet<>();
+                for (char element: rightLetter.toString().toCharArray()){
+                    rightLetterToHeshSet.add(element);
+                }
+                HashSet<Character> wrongLetterToHeshSet =new HashSet<>();
+                for (char element: wrongLetter.toString().toCharArray()){
+                    wrongLetterToHeshSet.add(element);
+                }
 
+                boolean containsInput = wordToHeshSet.contains(sch[0])
+                        && !lastWordToHeshSet.contains(sch[0])
+                        && !rightLetterToHeshSet.contains(sch[0])
+                        && !wrongLetterToHeshSet.contains(sch[0]);
 
-                boolean containsInput = word.contains(input) && !Arrays.toString(lastWord).contains(input)
-                        && !rightLetter.toString().contains(input)
-                        && !wrongLetter.toString().contains(input);
-
-                searchingLetterInMask(containsInput,sch,input);
-
+                searchingLetterInMask(containsInput, sch, input);
                 rightAndWrongLetterOutput(lastWord, rightLetter, wrongLetter);
             }
-
         }
-        gameResultOutput( rightLetter, lastWord, word);
-
+        gameResultOutput(rightLetter, lastWord, word);
     }
 
-    private void searchingLetterInMask(boolean containsInput,char[] sch,String input){
+    private void searchingLetterInMask(boolean containsInput, char[] sch, String input) {
         if (containsInput) {
             for (int i = 0; i < wordChar.length; i++) {
                 if (wordChar[i] == sch[0]) {
@@ -63,19 +71,19 @@ public class Game {
                     lastWord[i] = '_';
                 }
             }
-            rightLetter.append(sch[0]);
+            rightLetter.append(sch[0]); //rightLetter
         } else if (!word.contains(input) && !wrongLetter.toString().contains(input)
         ) {
-            countMistake++;
+            mistakesCounter++;
             wrongLetter.append(sch[0]);
-        } else if (rightLetter.toString().contains(input) || wrongLetter.toString().contains(input)) {
+        } else if (this.rightLetter.toString().contains(input) || wrongLetter.toString().contains(input)) {
             System.out.println(GameConstants.LETTER_ALREADY_ENTERED);
         }
     }
 
     private void rightAndWrongLetterOutput(char[] lastWord, StringBuilder rightLetter,
-                                           StringBuilder wrongLetter) { //,int countMistake
-        hangmanPicture();//countMistake
+                                           StringBuilder wrongLetter) {
+        hangmanPicture();
         String result = new String(lastWord);
         System.out.println(result);
         System.out.print(GameConstants.GUESSED_LETTERS + rightLetter + " ");
@@ -83,18 +91,16 @@ public class Game {
     }
 
 
-    private void gameResultOutput( StringBuilder rightLetter, char[] lastWord,
-                                   String word) {
-        Game hangman = new Game();
-        if (countMistake >= 7 && rightLetter.toString().length() != lastWord.length) {
+    private void gameResultOutput(StringBuilder rightLetter, char[] lastWord, String word) {
+        if (mistakesCounter >= 7 && rightLetter.toString().length() != lastWord.length) {
             System.out.println();
             System.out.println(GameConstants.LOSE_AND_MYSTERIOUS_WORD + word);
-            hangman.startOrFinish();
-        } else if (countMistake < 7) {
+            startOrFinish();
+        } else if (mistakesCounter < 7) {
             System.out.println();
             System.out.println(GameConstants.WIN);
             System.out.println(GameConstants.THE_MYSTERIOUS_WORD + word);
-            hangman.startOrFinish();
+            startOrFinish();
         }
     }
 
@@ -105,86 +111,15 @@ public class Game {
         System.out.println(result);
         System.out.print(GameConstants.GUESSED_LETTERS + rightLetter + " ");
         System.out.println(GameConstants.MISTAKES + wrongLetter + " ");
+    }
 
-    } //char[] lastWord, StringBuilder rightLetter,StringBuilder wrongLetter
-
-    private void hangmanPicture() {//int countMistake
+    private void hangmanPicture() {
 
         HangmanPictures[] pictures = HangmanPictures.values();
-        System.out.println(pictures[countMistake].getValue());
+        System.out.println(pictures[mistakesCounter].getValue());
 
     }
 
-    enum HangmanPictures {
-        ZERO("""
-                _______________
-                |             |
-                |             |
-                |             |
-                |             |
-                |_____________|"""),
-        ONE("""
-                _______________
-                |      |      |
-                |             |
-                |             |
-                |             |
-                |_____________|"""),
-        TWO("""
-                _______________
-                |      |      |
-                |     [oo]    |
-                |             |
-                |             |
-                |_____________|"""),
-        THREE("""
-                _______________
-                |      |      |
-                |     [oo]__  |
-                |             |
-                |             |
-                |_____________|"""),
-        FOUR("""
-                _______________
-                |      |      |
-                |   __[oo]__  |
-                |             |
-                |             |
-                |_____________|"""),
-        FIVE("""
-                _______________
-                |      |      |
-                |   __[oo]__  |
-                |     (~~)    |
-                |             |
-                |_____________|"""),
-        SIX("""
-                _______________
-                |      |      |
-                |   __[oo]__  |
-                |     (~~)    |
-                |     |       |
-                |_____________|"""),
-        SEVEN("""
-                _______________
-                |      |      |
-                |   __[oo]__  |
-                |     (~~)    |
-                |     |  |    |
-                |_____________|""");
-
-        private final String value;
-
-
-        HangmanPictures(String value) {
-            this.value = value;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-    }
 
     public void startOrFinish() {
         Game hangman = new Game();
@@ -208,7 +143,6 @@ public class Game {
                 System.out.print(GameConstants.EMPTY_INPUT);
             }
         }
-
     }
 
 

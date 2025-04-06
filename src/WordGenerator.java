@@ -12,7 +12,7 @@ public class WordGenerator {
         Random random = new Random();
         int randomNumber = random.nextInt(1000);
 
-        Scanner scanner = null;
+         Scanner scanner = null;
 
         try {
             scanner = new Scanner(dictionary);

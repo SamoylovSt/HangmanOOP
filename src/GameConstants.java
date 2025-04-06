@@ -5,7 +5,6 @@ public class GameConstants {
             " при вводе нескольких учитывается только первая";
     public static final String LETTER_ALREADY_ENTERED = "Такая буква уже введена, введите другую.";
     public static final String WIN = "              Победа! Ура!";
-
     public static final String THE_MYSTERIOUS_WORD = "          Загаданное слово: ";
     public static final String LOSE_AND_MYSTERIOUS_WORD = "Проигрыш, загаданное слово: ";
     public static final String IS_NOT_CORRECT_INPUT = "Некорректный ввод, Введите кириллицу";
